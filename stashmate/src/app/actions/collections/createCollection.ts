@@ -53,3 +53,4 @@ export async function createCollection(formData: FormData) {
   revalidatePath('/collections')
   return { success: true, data }
 }
+
