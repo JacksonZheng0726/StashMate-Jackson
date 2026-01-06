@@ -24,7 +24,7 @@
     "chart.js": "^4.5.1",
     "json-2-csv": "^5.5.10",
     "lightningcss": "^1.30.2",
-    "next": "^15.5.5",
+    "next": "^16.1.1",
     "react": "^19.1.0",
     "react-chartjs-2": "^5.3.1",
     "react-dom": "^19.1.0"
