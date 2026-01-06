@@ -1,21 +1,28 @@
 'use client'
 import Auth from './components/auth';
 import { useEffect, useState } from 'react'
-import Collection from './components/collections';
-import Inventory from './components/InventoryItem';
+// import Collection from './components/collections';
+// import Inventory from './components/InventoryItem';
 import { createBrowserClient } from '@supabase/ssr'
 import Navbar from './components/Navbar'; 
-import RevenueGraph from './components/RevenueGraph';
+// import RevenueGraph from './components/RevenueGraph';
 import InventoryPage from './components/InventoryPage';
 import { getRevenueDataByCollection } from './actions/dashboard/getRevenueData';
+import { Session } from '@supabase/supabase-js'
 
 //import ExportButton from './components/exportButton';
 
+interface RevenueDataPoint {
+  date: string;
+  revenue: number;
+  profit: number;
+}
+
 function App() {
-  const [session, setSession] = useState<any>(null)
+  const [session, setSession] = useState<Session | null>(null)
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null)
-  const [revenueData, setRevenueData] = useState<any[]>([]);
-  const [isLoadingRevenue, setIsLoadingRevenue] = useState(false);
+  const [revenueData, setRevenueData] = useState<RevenueDataPoint[]>([]);
+  const [_, setIsLoadingRevenue] = useState(false);
   const [revenueRefreshTrigger, setRevenueRefreshTrigger] = useState(0);
   
   const supabase = createBrowserClient(

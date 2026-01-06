@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/server'
 import { csv2json } from 'json-2-csv'
 
-function toNumber(value: any, defaultValue: number = 0): number {
+function toNumber(value: unknown, defaultValue: number = 0): number {
   if (value === null || value === undefined || value === '') {
     return defaultValue
   }
@@ -11,9 +11,35 @@ function toNumber(value: any, defaultValue: number = 0): number {
   return isNaN(num) ? defaultValue : num
 }
 
+interface CSVRow {
+  collection_name: string;
+  collection_category: string;
+  collection_acquired_date: string;
+  item_name: string;
+  item_condition: string;
+  item_cost: string | number;
+  item_price: string | number;
+  item_source: string;
+  item_status: string | number;
+  item_quantity: string | number;
+  item_image_url: string;
+}
+
+interface ItemData {
+  name: string;
+  condition: string;
+  cost: number;
+  price: number;
+  profit: number;
+  source: string;
+  status: number;
+  quantity: number;
+  image_url: string;
+  created_at: string;
+}
 
 // convert status text to numbers
-function statusToNumber(value: any): number {
+function statusToNumber(value: unknown): number {
   if (value === null || value === undefined || value === '') {
     return 0
   }
@@ -44,7 +70,7 @@ export async function importCollectionsWithItems(csvContent: string) {
   }
 
   try {
-    const rows = csv2json(csvContent) as any[]
+    const rows = csv2json(csvContent) as CSVRow[]
     
     if (!rows?.length){
       return { error: 'No data found in CSV' } 
@@ -88,7 +114,7 @@ export async function importCollectionsWithItems(csvContent: string) {
 
     let created = 0, updated = 0
 
-    for (const [key, collection] of collections) {
+    for (const [ collection] of collections) {
       const items = collection.items
       
       delete collection.items
@@ -142,7 +168,7 @@ export async function importCollectionsWithItems(csvContent: string) {
 
         const { error: itemsError } = await supabase
           .from('items')
-          .insert(items.map((item: any) => ({ 
+          .insert(items.map((item: ItemData) => ({ 
             ...item, 
             collection_id: collectionId 
           })))

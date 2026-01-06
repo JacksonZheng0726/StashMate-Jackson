@@ -1,6 +1,19 @@
 'use server'
 import { createClient } from '@/lib/server'
 
+
+
+interface sharedCollection {
+  id: string;
+  name: string;
+  category: string;
+  acquired_date: string;
+  owner_id: string;
+  permission: 'view' | 'edit';
+  is_owner: boolean;
+  owner_name: string;
+}
+
 export async function getCollections() {
   const supabase = await createClient()
   
@@ -33,7 +46,7 @@ export async function getCollections() {
   }
 
   // Get the actual collection data for shared collections
-  let sharedCollections: any[] = []
+  let sharedCollections: sharedCollection[] = []
   if (permissions && permissions.length > 0) {
     const sharedIds = permissions.map(p => p.collection_id)
     const { data: sharedCollectionsData, error: sharedError } = await supabase

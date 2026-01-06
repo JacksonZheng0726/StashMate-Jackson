@@ -17,6 +17,18 @@ const getStatusText = (status: number): string => {
     }
   };
 
+type CollectionItem = {
+  name: string;
+  condition: string;
+  cost: number;
+  price: number;
+  profit: number;
+  source: string;
+  status: number;
+  quantity: number;
+  image_url: string;
+}
+
 export async function exportCollectionsWithItems(collectionID?: string[]) {
   const supabase = await createClient()
   
@@ -53,12 +65,12 @@ export async function exportCollectionsWithItems(collectionID?: string[]) {
   try {
     /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flatMap */
     const exportData = collections.flatMap(collection => {
-      const { id, owner_id, items, ...collectionData } = collection
+      const { items, ...collectionData } = collection
       
       const collectionItems = items && items.length > 0 ? items : [null]
       
-      return collectionItems.map((item: any) => {
-        const { id, collection_id, ...itemData } = item || {}
+      return collectionItems.map((item: CollectionItem) => {
+        const { ...itemData } = item || {}
         
         return {
           collection_name: collectionData.name,
@@ -81,6 +93,7 @@ export async function exportCollectionsWithItems(collectionID?: string[]) {
     
     return {csv, count: exportData.length }
   } catch (error) {
-    return { error: 'Failed to generate CSV' }
+    console.error('CSV generation failed:', error);
+    return { error: 'Failed to generate CSV'}
   }
 }

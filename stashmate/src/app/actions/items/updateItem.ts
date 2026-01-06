@@ -36,7 +36,7 @@ export async function updateItem(formData: FormData) {
       const fileExt = imageFile.name.split('.').pop()
       const fileName = `${user.id}/${Date.now()}.${fileExt}`
       
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('item-images')
         .upload(fileName, imageFile, {
           cacheControl: '3600',

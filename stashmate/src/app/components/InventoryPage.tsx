@@ -7,6 +7,12 @@ import { getCollectionOwner } from '../actions/collections/getSharedCollectionOw
 
 import { useState, useEffect } from "react";
 
+export type RevenueData = {
+  date: string;
+  revenue: number;
+  profit: number;
+}
+
 export default function InventoryPage({
   refreshRevenue,
   revenueData,
@@ -15,7 +21,7 @@ export default function InventoryPage({
 }: {
   onBack: () => void;
   refreshRevenue: () => void;
-  revenueData: any[];
+  revenueData: RevenueData[];
   selectedCollectionId: number | null;
   setSelectedCollectionId: (id: number | null) => void;
 }) {

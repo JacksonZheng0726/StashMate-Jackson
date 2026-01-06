@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend, ChartData, TooltipItem } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
 
@@ -17,7 +17,7 @@ interface RevenueGraphProps {
 }
 
 const RevenueGraph: React.FC<RevenueGraphProps> = ({ data }) => {
-  const [chartData, setChartData] = useState<any>(null);
+  const [chartData, setChartData] = useState<ChartData<'line'> | null>(null);
 
   // Prepare the data for the chart when it changes
   useEffect(() => {
@@ -67,9 +67,9 @@ const RevenueGraph: React.FC<RevenueGraphProps> = ({ data }) => {
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
+          label: function(context: TooltipItem<'line'>) {
             const label = context.dataset.label || '';
-            return `${label}: $${context.parsed.y.toFixed(2)}`;
+            return `${label}: $${context.parsed.y?.toFixed(2)}`;
           }
         }
       }
@@ -78,7 +78,7 @@ const RevenueGraph: React.FC<RevenueGraphProps> = ({ data }) => {
       y: {
         beginAtZero: true,
         ticks: {
-          callback: function(value: any) {
+          callback: function(value: string | number) {
             return '$' + value;
           }
         }

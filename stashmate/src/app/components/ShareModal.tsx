@@ -209,7 +209,7 @@ export default function ShareModal({ collectionId, collectionName, onClose }: Sh
 
           {sharedUsers.length === 0 ? (
             <p className="text-sm text-gray-400">
-              This collection hasn't been shared yet.
+              This collection has not been shared yet.
             </p>
           ) : (
             <ul className="space-y-2">

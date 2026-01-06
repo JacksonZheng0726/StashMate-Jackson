@@ -84,7 +84,7 @@ export default function RenameCollectionModal({
         <div style={{ marginBottom: "16px" }}>
           <h2 style={{ margin: 0, fontSize: "1.1rem" }}>Rename Collection</h2>
           <p className="muted" style={{ marginTop: "4px" }}>
-            Enter a new name for "{collection.name}"
+            Enter a new name for -{collection.name}
           </p>
         </div>
 

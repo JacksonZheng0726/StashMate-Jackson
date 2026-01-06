@@ -1,6 +1,31 @@
 'use server'
 import { createClient } from '@/lib/server'
 
+
+interface PermissionWithUser {
+  id: number;
+  permission_level: 'view' | 'edit';
+  user_id: string;
+  users: {
+    email: string;
+  }[]; 
+}
+
+
+interface FormattedPermission {
+  id: number;
+  permission_level: 'view' | 'edit';
+  user_id: string;
+  email: string;
+}
+
+interface PermissionWithCollection {
+  owner_id: string;
+  collection_id: string;
+}
+
+
+
 export async function shareCollection(
   collectionId: number,
   userEmail: string,
@@ -111,11 +136,11 @@ export async function getSharedUsers(collectionId: number) {
     return { error: 'Failed to fetch shared users', data: null }
   }
 
-  const formattedData = permissions?.map((p: any) => ({
+  const formattedData: FormattedPermission[] = permissions?.map((p: PermissionWithUser) => ({
     id: p.id,
     permission_level: p.permission_level,
     user_id: p.user_id,
-    email: p.users.email,
+    email: p.users[0]?.email || '',
   })) || []
 
   return { error: null, data: formattedData }
@@ -145,7 +170,7 @@ export async function updateSharePermission(
     .eq('id', permissionId)
     .single()
 
-  if (!permission || (permission.collections as any).owner_id !== user.id) {
+  if (!permission || (permission.collections as unknown as PermissionWithCollection).owner_id !== user.id) {
     return { error: 'Unauthorized', success: false }
   }
 
@@ -184,7 +209,7 @@ export async function removeShare(permissionId: number) {
     .eq('id', permissionId)
     .single()
 
-  if (!permission || (permission.collections as any).owner_id !== user.id) {
+  if (!permission || (permission.collections as unknown as  PermissionWithCollection).owner_id !== user.id) {
     return { error: 'Unauthorized', success: false }
   }
 

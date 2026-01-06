@@ -1,7 +1,7 @@
 'use server'
 
 import { supabase } from '@/lib/supabaseClient'
-import type { Tables } from '@/app/types/schema'
+// import type { Tables } from '@/app/types/schema'
 
 // Define allowed sort fields and order directions for type safety
 type SortableFields = 'name' | 'category' | 'acquired_date' 
