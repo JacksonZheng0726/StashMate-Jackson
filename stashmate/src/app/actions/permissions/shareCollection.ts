@@ -98,16 +98,13 @@ export async function shareCollection(
   return { success: true, error: null }
 }
 
+
 export async function getSharedUsers(collectionId: number) {
   const supabase = await createClient()
 
   const { data: { user }, error: authError } = await supabase.auth.getUser()
-  
-  if (authError || !user) {
-    return { error: 'You must be logged in', data: null }
-  }
+  if (authError || !user) return { error: 'You must be logged in', data: null }
 
-  // Verify ownership
   const { data: collection } = await supabase
     .from('collections')
     .select('owner_id')
@@ -118,33 +115,34 @@ export async function getSharedUsers(collectionId: number) {
     return { error: 'Unauthorized', data: null }
   }
 
-  // Get all permissions for this collection
-  const { data: permissions, error } = await supabase
+  const { data: perms, error: permsErr } = await supabase
     .from('permissions')
-    .select(`
-      id,
-      permission_level,
-      user_id,
-      users!inner (
-        email
-      )
-    `)
+    .select('id, permission_level, user_id')
     .eq('collection_id', collectionId)
 
-  if (error) {
-    console.error('Error fetching permissions:', error)
-    return { error: 'Failed to fetch shared users', data: null }
-  }
+  if (permsErr) return { error: permsErr.message, data: null }
 
-  const formattedData: FormattedPermission[] = permissions?.map((p: PermissionWithUser) => ({
+  const userIds = (perms ?? []).map(p => p.user_id)
+
+  const { data: users, error: usersErr } = await supabase
+    .from('users')
+    .select('id, email')
+    .in('id', userIds)
+
+  if (usersErr) return { error: usersErr.message, data: null }
+
+  const emailById = new Map((users ?? []).map(u => [u.id, u.email]))
+
+  const formatted = (perms ?? []).map(p => ({
     id: p.id,
     permission_level: p.permission_level,
     user_id: p.user_id,
-    email: p.users[0]?.email || '',
-  })) || []
+    email: emailById.get(p.user_id) ?? '',
+  }))
 
-  return { error: null, data: formattedData }
+  return { error: null, data: formatted }
 }
+
 
 export async function updateSharePermission(
   permissionId: number,

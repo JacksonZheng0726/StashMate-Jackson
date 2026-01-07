@@ -33,6 +33,10 @@ export default function ShareModal({ collectionId, collectionName, onClose }: Sh
     fetchSharedUsers()
   }, [collectionId])
 
+  useEffect(() => {
+  console.log('Shared users:', sharedUsers)
+  }, [sharedUsers])
+
   const fetchSharedUsers = async () => {
     const result = await getSharedUsers(collectionId)
     if (result.error) {
